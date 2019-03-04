@@ -8,14 +8,18 @@
  */
 class RangeCollection {
 
+    constructor() {
+        this._rangeCollection = [];
+    }
+
     /**
      * Adds a range to the collection
      * @param {Array<number>} range - Array of two integers that specify beginning and end of range.
      */
     add(range) {
         this._checkRange(range);
-
-        // TODO: implement this
+        console.log(range);
+        this._rangeCollection.push(range);
     }
 
     /**
@@ -31,12 +35,13 @@ class RangeCollection {
      * Prints out the list of ranges in the range collection
      */
     print() {
-        return "1";
+        console.log(this.toString());
     }
 
     /**
      * Private method for checking range input value.  Throws exceptions if problems found.
      * @param {Array<number>} range - Array of two integers that specify beginning and end of range.
+     * @private
      */
     _checkRange(range) {
         if (!Array.isArray(range)) {
@@ -55,6 +60,35 @@ class RangeCollection {
                 "Start:" + start + ",End:" + end)
         }
     }
+
+    /**
+     * Get string representation of range collection
+     * @returns {string} representation of range collection
+     */
+    toString() {
+        var stringRepr = "";
+        for (let i=0; i<= this._rangeCollection.length - 1; i++) {
+            let range = this._rangeCollection[i];
+            if (i === 0) {
+                stringRepr += this._getSetRepr(range[0], range[1]);
+                continue
+            }
+            stringRepr += " " + this._getSetRepr(range[0], range[1]);
+        }
+        return stringRepr;
+    }
+
+    /**
+     * Return the set representation of a range array (ie. [1, 2] => [1, 2)
+     * @param start  - number of start of array
+     * @param end  - number of end of array
+     * @returns {string}
+     * @private
+     */
+    _getSetRepr(start, end) {
+        return "[" + start + ", " + end + ")";
+    }
+
 }
 
 
