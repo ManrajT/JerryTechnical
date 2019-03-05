@@ -1,8 +1,8 @@
 const RangeCollection = require("./RangeCollection");
 
-const rc = new RangeCollection();
 
 test("givenTests", () => {
+    const rc = new RangeCollection();
     rc.add([1, 5]);
     expect(rc.toString()).toBe("[1, 5)");
 
@@ -34,7 +34,107 @@ test("givenTests", () => {
     expect(rc.toString()).toBe("[1, 3) [19, 21)");
 });
 
+
+test("tests for adding 1", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.add([4, 5]);
+    expect(rc.toString()).toBe("[1, 2) [4, 5)");
+
+    rc.add([6, 7]);
+    expect(rc.toString()).toBe("[1, 2) [4, 7)");
+});
+
+
+test("tests for adding 2", () => {
+    const rc = new RangeCollection();
+
+    rc.add([4, 5]);
+    expect(rc.toString()).toBe("[4, 5)");
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2) [4, 5)");
+
+    rc.add([6, 7]);
+    expect(rc.toString()).toBe("[1, 2) [4, 7)");
+});
+
+
+test("tests for adding 3", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.add([2, 3]);
+    expect(rc.toString()).toBe("[1, 3)");
+
+});
+
+
+test("tests for adding 4", () => {
+    const rc = new RangeCollection();
+
+    rc.add([2, 3]);
+    expect(rc.toString()).toBe("[2, 3)");
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 3)");
+
+});
+
+
+test("tests for adding 5", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.add([3, 4]);
+    expect(rc.toString()).toBe("[1, 4)");
+
+});
+
+
+test("tests for adding 6", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.add([4, 5]);
+    expect(rc.toString()).toBe("[1, 2) [4, 5)");
+
+    rc.add([2, 4]);
+    expect(rc.toString()).toBe("[1, 5)");
+});
+
+test("tests for adding 7", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.add([0, 4]);
+    expect(rc.toString()).toBe("[0, 4)");
+});
+
+test("tests for adding 8", () => {
+    const rc = new RangeCollection();
+
+    rc.add([0, 4]);
+    expect(rc.toString()).toBe("[0, 4)");
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[0, 4)");
+});
+
 test("not an array should throw error", () => {
+    const rc = new RangeCollection();
+
     function addNotAnArray() {
         rc.add("not an array");
     }
@@ -43,6 +143,8 @@ test("not an array should throw error", () => {
 });
 
 test("different than 2 elements should throw error", () => {
+    const rc = new RangeCollection();
+
     function threeElements() {
         rc.add([0, 1, 2]);
     }
@@ -57,6 +159,8 @@ test("different than 2 elements should throw error", () => {
 });
 
 test("array without numbers should throw error", () => {
+    const rc = new RangeCollection();
+
     function stringsInArray() {
         rc.add(["ok", 1]);
     }
@@ -65,6 +169,8 @@ test("array without numbers should throw error", () => {
 });
 
 test("start after end should throw error", () => {
+    const rc = new RangeCollection();
+
     function startAfterEnd() {
         rc.add([2, 1]);
     }

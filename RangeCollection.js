@@ -16,18 +16,40 @@ class RangeCollection {
      * Adds a range to the collection
      * @param {Array<number>} range - Array of two integers that specify beginning and end of range.
      */
-    add(range) {
-        this._checkRange(range);
-        console.log(range);
-        this._rangeCollection.push(range);
+    add(inputRange) {
+        this._checkRange(inputRange);
+        //insert new array approximately
+        if (this._rangeCollection.length === 0) {
+            this._rangeCollection.push(inputRange);
+        }
+        for (let i = 0; i < this._rangeCollection.length; i++) {
+            let currRange = this._rangeCollection[i];
+            if (inputRange[0] < currRange[0]) {
+                // if input range starts before current range, insert it before
+                this._rangeCollection.splice(i, 0, inputRange);
+                break
+            } else if (inputRange[0] >= currRange[0] && inputRange[1] <= currRange[1]) {
+                //do nothing when input range fits within current range
+                break;
+            } else if (i === this._rangeCollection.length - 1) {
+                //insert input at end if reached
+                this._rangeCollection.push(inputRange);
+                break;
+            }
+        }
+        //then simplify to proper form
+        this._simplifyRange();
     }
 
     /**
      * Removes a range from the collection
      * @param {Array<number>} range - Array of two integers that specify beginning and end of range.
      */
-    remove(range) {
-        this._checkRange(range);
+    remove(inputRange) {
+        this._checkRange(inputRange);
+        if (inputRange[0] === inputRange[1]) {
+            return;
+        }
         // TODO: implement this
     }
 
@@ -67,7 +89,7 @@ class RangeCollection {
      */
     toString() {
         var stringRepr = "";
-        for (let i=0; i<= this._rangeCollection.length - 1; i++) {
+        for (let i = 0; i <= this._rangeCollection.length - 1; i++) {
             let range = this._rangeCollection[i];
             if (i === 0) {
                 stringRepr += this._getSetRepr(range[0], range[1]);
@@ -89,6 +111,36 @@ class RangeCollection {
         return "[" + start + ", " + end + ")";
     }
 
+    /**
+     * Simplifies the range collection to clear any overlaps
+     * @private
+     */
+    _simplifyRange() {
+        let simplifiedRangeCollection = [];
+        this._rangeCollection.forEach(function (currentRange, index) {
+            if (index === 0) {
+                simplifiedRangeCollection.push(currentRange);
+                return
+            }
+            let latestIndexInNewCollection = simplifiedRangeCollection.length - 1;
+            let priorRange = simplifiedRangeCollection[latestIndexInNewCollection];
+            if (priorRange[1] >= currentRange[0] - 1) { // - 1 to support joining sequential ranges
+                //if priorRange ends later than beginning of currentRange
+                //then join ranges together and replace priorRange with joinedRange
+                let joinedRange = [];
+                if (currentRange[1] > priorRange[1]) {
+                    joinedRange = [priorRange[0], currentRange[1]];
+                } else {
+                    joinedRange = [priorRange[0], priorRange[1]]
+                }
+                simplifiedRangeCollection.splice(latestIndexInNewCollection, 1, joinedRange);
+            } else {
+                //if not joining arrays, just add currentRange to new collection
+                simplifiedRangeCollection.push(currentRange);
+            }
+        });
+        this._rangeCollection = simplifiedRangeCollection;
+    }
 }
 
 
