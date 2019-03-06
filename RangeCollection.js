@@ -18,17 +18,21 @@ class RangeCollection {
      */
     add(inputRange) {
         this._checkRange(inputRange);
+        let inputRangeStart = inputRange[0];
+        let inputRangeEnd = inputRange[1];
         //insert new array approximately
         if (this._rangeCollection.length === 0) {
             this._rangeCollection.push(inputRange);
         }
         for (let i = 0; i < this._rangeCollection.length; i++) {
             let currRange = this._rangeCollection[i];
-            if (inputRange[0] < currRange[0]) {
+            let currRangeStart = currRange[0];
+            let currRangeEnd = currRange[1];
+            if (inputRangeStart < currRangeStart) {
                 // if input range starts before current range, insert it before
                 this._rangeCollection.splice(i, 0, inputRange);
                 break
-            } else if (inputRange[0] >= currRange[0] && inputRange[1] <= currRange[1]) {
+            } else if (inputRangeStart >= currRangeStart && inputRangeEnd <= currRangeEnd) {
                 //do nothing when input range fits within current range
                 break;
             } else if (i === this._rangeCollection.length - 1) {
@@ -47,24 +51,28 @@ class RangeCollection {
      */
     remove(inputRange) {
         this._checkRange(inputRange);
+        let inputRangeStart = inputRange[0];
+        let inputRangeEnd = inputRange[1];
         for (let i=0; i<this._rangeCollection.length; i++) {
             let currRange = this._rangeCollection[i];
+            let currRangeStart = currRange[0];
+            let currRangeEnd = currRange[1];
             //if input range overlaps with current range...
-            if(inputRange[1] >= currRange[0] && inputRange[0] <= currRange[1]) {
+            if (inputRangeEnd >= currRange[0] && inputRangeStart <= currRangeEnd) {
                 //if your removing middle of the current array, then split into two arrays
-                if(inputRange[0] > currRange[0] && inputRange[1] < currRange[1]) {
-                    let newFirstArray = [currRange[0], inputRange[0]];
-                    let newSecondArray = [inputRange[1], currRange[1]];
+                if (inputRangeStart > currRangeStart && inputRangeEnd < currRangeEnd) {
+                    let newFirstArray = [currRangeStart, inputRangeStart];
+                    let newSecondArray = [inputRangeEnd, currRangeEnd];
                     this._rangeCollection.splice(i, 1, newFirstArray, newSecondArray);
                 //if your removing more than or equal to current array, delete it
-                } else if (inputRange[1] >= currRange[1] && inputRange[0] <= currRange[0]) {
+                } else if (inputRangeEnd >= currRangeEnd && inputRangeStart <= currRangeStart) {
                     this._rangeCollection.splice(i, 1);
                     i--; //since an element has been removed, reprocess current index
-                } else if (inputRange[1] < currRange[1]) {
-                    let newArray = [inputRange[1], currRange[1]];
+                } else if (inputRangeEnd < currRangeEnd) {
+                    let newArray = [inputRangeEnd, currRangeEnd];
                     this._rangeCollection.splice(i, 1, newArray);
-                } else if (inputRange[0] > currRange[0]){
-                    let newArray = [currRange[0], inputRange[0]];
+                } else if (inputRangeStart > currRangeStart) {
+                    let newArray = [currRange[0], inputRangeStart];
                     this._rangeCollection.splice(i, 1, newArray);
                 }
             }
@@ -109,13 +117,9 @@ class RangeCollection {
         var stringRepr = "";
         for (let i = 0; i <= this._rangeCollection.length - 1; i++) {
             let range = this._rangeCollection[i];
-            if (i === 0) {
-                stringRepr += this._getSetRepr(range[0], range[1]);
-                continue
-            }
-            stringRepr += " " + this._getSetRepr(range[0], range[1]);
+            stringRepr += this._getSetRepr(range[0], range[1]) + " ";
         }
-        return stringRepr;
+        return stringRepr.trim();
     }
 
     /**
@@ -135,26 +139,29 @@ class RangeCollection {
      */
     _simplifyRange() {
         let simplifiedRangeCollection = [];
-        this._rangeCollection.forEach(function (currentRange, index) {
-            if (index === 0) {
-                simplifiedRangeCollection.push(currentRange);
-                return
+        simplifiedRangeCollection.push(this._rangeCollection[0]);
+        this._rangeCollection.forEach(function (currRange, i) {
+            if (i===0) {
+                return;
             }
-            let latestIndexInNewCollection = simplifiedRangeCollection.length - 1;
-            let priorRange = simplifiedRangeCollection[latestIndexInNewCollection];
-            if (priorRange[1] >= currentRange[0]) { //
-                //if priorRange ends later than beginning of currentRange
-                //then join ranges together and replace priorRange with joinedRange
+            let currRangeStart = currRange[0];
+            let currRangeEnd = currRange[1];
+            let priorRange = simplifiedRangeCollection[simplifiedRangeCollection.length - 1];
+            let priorRangeStart = priorRange[0];
+            let priorRangeEnd = priorRange[1];
+            if (priorRangeEnd >= currRangeStart) { //
+                //if priorRange ends later than beginning of currRange
+                //then join ranges together and replace priorRange with joined range
                 let joinedRange = [];
-                if (currentRange[1] > priorRange[1]) {
-                    joinedRange = [priorRange[0], currentRange[1]];
+                if (currRangeEnd > priorRangeEnd) {
+                    joinedRange = [priorRangeStart, currRangeEnd];
                 } else {
-                    joinedRange = [priorRange[0], priorRange[1]]
+                    joinedRange = [priorRangeStart, priorRangeEnd]
                 }
-                simplifiedRangeCollection.splice(latestIndexInNewCollection, 1, joinedRange);
+                simplifiedRangeCollection.splice(simplifiedRangeCollection.length - 1, 1, joinedRange);
             } else {
-                //if not joining arrays, just add currentRange to new collection
-                simplifiedRangeCollection.push(currentRange);
+                //if not joining arrays, just add currRange to new collection
+                simplifiedRangeCollection.push(currRange);
             }
         });
         this._rangeCollection = simplifiedRangeCollection;
