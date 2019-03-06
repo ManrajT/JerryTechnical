@@ -47,10 +47,28 @@ class RangeCollection {
      */
     remove(inputRange) {
         this._checkRange(inputRange);
-        if (inputRange[0] === inputRange[1]) {
-            return;
+        for (let i=0; i<this._rangeCollection.length; i++) {
+            let currRange = this._rangeCollection[i];
+            //if input range overlaps with current range...
+            if(inputRange[1] >= currRange[0] && inputRange[0] <= currRange[1]) {
+                //if your removing middle of the current array, then split into two arrays
+                if(inputRange[0] > currRange[0] && inputRange[1] < currRange[1]) {
+                    let newFirstArray = [currRange[0], inputRange[0]];
+                    let newSecondArray = [inputRange[1], currRange[1]];
+                    this._rangeCollection.splice(i, 1, newFirstArray, newSecondArray);
+                //if your removing more than or equal to current array, delete it
+                } else if (inputRange[1] >= currRange[1] && inputRange[0] <= currRange[0]) {
+                    this._rangeCollection.splice(i, 1);
+                    i--; //since an element has been removed, reprocess current index
+                } else if (inputRange[1] < currRange[1]) {
+                    let newArray = [inputRange[1], currRange[1]];
+                    this._rangeCollection.splice(i, 1, newArray);
+                } else if (inputRange[0] > currRange[0]){
+                    let newArray = [currRange[0], inputRange[0]];
+                    this._rangeCollection.splice(i, 1, newArray);
+                }
+            }
         }
-        // TODO: implement this
     }
 
     /**
@@ -124,7 +142,7 @@ class RangeCollection {
             }
             let latestIndexInNewCollection = simplifiedRangeCollection.length - 1;
             let priorRange = simplifiedRangeCollection[latestIndexInNewCollection];
-            if (priorRange[1] >= currentRange[0] - 1) { // - 1 to support joining sequential ranges
+            if (priorRange[1] >= currentRange[0]) { //
                 //if priorRange ends later than beginning of currentRange
                 //then join ranges together and replace priorRange with joinedRange
                 let joinedRange = [];

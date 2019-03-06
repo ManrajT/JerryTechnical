@@ -45,7 +45,7 @@ test("tests for adding 1", () => {
     expect(rc.toString()).toBe("[1, 2) [4, 5)");
 
     rc.add([6, 7]);
-    expect(rc.toString()).toBe("[1, 2) [4, 7)");
+    expect(rc.toString()).toBe("[1, 2) [4, 5) [6, 7)");
 });
 
 
@@ -59,7 +59,7 @@ test("tests for adding 2", () => {
     expect(rc.toString()).toBe("[1, 2) [4, 5)");
 
     rc.add([6, 7]);
-    expect(rc.toString()).toBe("[1, 2) [4, 7)");
+    expect(rc.toString()).toBe("[1, 2) [4, 5) [6, 7)");
 });
 
 
@@ -94,7 +94,7 @@ test("tests for adding 5", () => {
     expect(rc.toString()).toBe("[1, 2)");
 
     rc.add([3, 4]);
-    expect(rc.toString()).toBe("[1, 4)");
+    expect(rc.toString()).toBe("[1, 2) [3, 4)");
 
 });
 
@@ -131,6 +131,127 @@ test("tests for adding 8", () => {
     rc.add([1, 2]);
     expect(rc.toString()).toBe("[0, 4)");
 });
+
+test("tests for removing 1", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.remove([1, 2]);
+    expect(rc.toString()).toBe("");
+});
+
+test("tests for removing 2", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.remove([0, 10]);
+    expect(rc.toString()).toBe("");
+});
+
+test("tests for removing 3", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.add([15, 20]);
+    expect(rc.toString()).toBe("[1, 2) [15, 20)");
+
+    rc.remove([0, 10]);
+    expect(rc.toString()).toBe("[15, 20)");
+});
+
+test("tests for removing 4", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 2]);
+    expect(rc.toString()).toBe("[1, 2)");
+
+    rc.add([15, 20]);
+    expect(rc.toString()).toBe("[1, 2) [15, 20)");
+
+    rc.remove([0, 17]);
+    expect(rc.toString()).toBe("[17, 20)");
+});
+
+test("tests for removing 5", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 5]);
+    expect(rc.toString()).toBe("[1, 5)");
+
+    rc.add([10, 15]);
+    expect(rc.toString()).toBe("[1, 5) [10, 15)");
+
+    rc.remove([4, 11]);
+    expect(rc.toString()).toBe("[1, 4) [11, 15)");
+});
+
+test("tests for removing 6", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 5]);
+    expect(rc.toString()).toBe("[1, 5)");
+
+    rc.remove([0, 2]);
+    expect(rc.toString()).toBe("[2, 5)");
+});
+
+test("tests for removing 7", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 5]);
+    expect(rc.toString()).toBe("[1, 5)");
+
+    rc.remove([1, 2]);
+    expect(rc.toString()).toBe("[2, 5)");
+});
+
+test("tests for removing 8", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 5]);
+    expect(rc.toString()).toBe("[1, 5)");
+
+    rc.remove([3, 6]);
+    expect(rc.toString()).toBe("[1, 3)");
+
+});
+
+test("tests for removing 8", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 10]);
+    expect(rc.toString()).toBe("[1, 10)");
+
+    rc.remove([5, 6]);
+    expect(rc.toString()).toBe("[1, 5) [6, 10)");
+});
+
+test("tests for removing 9", () => {
+    const rc = new RangeCollection();
+
+    rc.add([1, 10]);
+    expect(rc.toString()).toBe("[1, 10)");
+
+    rc.remove([11, 12]);
+    expect(rc.toString()).toBe("[1, 10)");
+});
+
+test("tests for removing 10", () => {
+    const rc = new RangeCollection();
+
+    rc.add([11, 12]);
+    expect(rc.toString()).toBe("[11, 12)");
+
+    rc.remove([1, 10]);
+    expect(rc.toString()).toBe("[11, 12)");
+});
+
 
 test("not an array should throw error", () => {
     const rc = new RangeCollection();
